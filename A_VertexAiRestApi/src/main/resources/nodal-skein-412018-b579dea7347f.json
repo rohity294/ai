@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nodal-skein-412018",
+  "private_key_id": "b579dea7347fbaeb8bc5876fb1a7814c0b795213",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDHxYpxPXu2XG6d\nUE5D0a+gSx+dJqymabq1AhpSQJ9C8MT6ZLSN7tR8sYaGMDFpUv9MPX85ZFrSjkBF\nFoPJpgYuJmBbHQ3XTDBhShyvgcf9iihRJkrM0LbHOTYrSxb8RaO33zQ5ZblXMPWY\nwQrjOAjk246buEaFpp1hOQEVUzNr98DozaKqZVxPrcS6NeZ4Ygl3XkeXsphkeQsc\nTG68wPM8a7zAjqmwV0VtvrDK5RCZR4PdK+lZwrodmYAk4HKtDoF+YS73X/PutyrH\njYtVeoT5RxAdple+c+acCWv4baPit+mayErtjMGkCILS798isn9E8fkmIqaox7+q\nHEJb4krTAgMBAAECggEANBJDCEpQ5VNJh9rHU7kj0KHUPze19/iGMKk4KCls+dtd\nVLEMORTAMTJq0K5eKsh2AC7laxXD8K8ghIGeX2DVqpDZO9aiZXSYBbv2Jy8qbGVn\nJePXynQ6uEoq2vULLD2Qs5xL9gwUV+xMkAD9cAWKl/C8xs0tIKgxzIY5yI+zzxfC\nlZsEqshRR/oB+uSYNqr4+j7A6b06bvkhTK5FKa8xSRUnRfdQj1i86DmmVrGfxsUo\nnUIAccfa2ucIGx62qDibG49m4QqAcS1wiQ3sefB1aPhlROjNqjFW2ME5pP5PYoql\nrUB+eKbuX9O2ncoZ+ZMNOoDIFk2fLQgIhwDh8nkRMQKBgQDuGbC7iwQQ90vVhaQ2\n9vWnNUAPKscpO4olrTZusu5Sq4GSqOjpkrRi7MlGfhxJ2ex/0JjUbwQJ2X9WeEdB\ntr6XZ2E88mQsRncqS2mJ7vW1c+FKpfgc1olxgp1IOAE1jtjdcFqJiagYPRR8/mec\nmT+wZDOjWnz6PF5bwmPq7X+rgwKBgQDWyjQTIdpdtM/+MWQS47EhX2mTXHhl+lco\nbLO9GJ2/zOuCAatFvo9ckOkWlRuVHXgc8Tkh0sFRCl61ha6lrq6i+IhsuA/JXtW7\nd2+FG5qxTXzBpiLrEUra2n6mJHTY9LdxiIBbeZ30+SI/jJLA8xHw4WrvqA8+T5NG\niCe0NlgycQKBgQCyo0+3xbsNR5z73EKygmMYSpl/R6cZRnSFhAl80H6CQ+75LAVj\niRAR0HnKi7+JoRkRZF3ltE0hXq9tHtzHbuZcDdIkue9yUIQDlYTfWgu7Ue/L4+3d\nJREFuutqTaqKllwa97rVyhP16429odn24fuoyeT8QF3YGQbqbVQt5HaPJQKBgEqT\nrJ8T+wDcPfeRaKDSY/clbL/YtIkb8dU8YPAAMw2cdg0OzUwLDTXjrrrDjO8qa0EJ\nVH/08GBWDGpUfz5Rt5soVh4BjqGphuZvYs5BtmVndTC7oZYiy+3PPXgsYlHOLj+C\nWKbqRDkBo62S/oV2ID2V1w5dOOW2tXkg30BIOjlRAoGBAIqViuO+kr+FUZeQ9/JM\ne5VCBes1Wxkwvzt+HIOZXWGR5a1nWEYKXPr2D4xI/mleVZnWjrV4soFS/3hvSzV3\n9zMP91zrcwVBcQ4Yr8HZVe5OsXlvpdsSzGEU78pdo4ZRCWGiQuHSMqBOR1myEp3+\nKDQuIveM9ao3V4UzFGjjvazW\n-----END PRIVATE KEY-----\n",
+  "client_email": "mygenerativeaiserviceaccount@nodal-skein-412018.iam.gserviceaccount.com",
+  "client_id": "105297439697240323357",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mygenerativeaiserviceaccount%40nodal-skein-412018.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
