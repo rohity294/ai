@@ -30,3 +30,7 @@ A_VertexAiRestApi/build
 A_VertexAiRestApi/gradle
 A_VertexAiRestApi/*.gradle
 A_VertexAiRestApi/gradlew*
+
+#NodeJS Visual Studio Code
+B_ChatGPTApiWithNode/node_modules
+
