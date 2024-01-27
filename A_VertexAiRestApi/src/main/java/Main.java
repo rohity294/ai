@@ -48,7 +48,7 @@ public class Main {
             default:;
         }
 
-        display();//for testing results on consolde
+        display();//for testing results on console
     }
 
     private static void display(){
