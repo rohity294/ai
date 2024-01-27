@@ -3,7 +3,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,14 +14,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-//System.out.println("Enter Vendor Choice: \n 1:GoogleAI \n 2:ChatGPT");
+//Vendor Choice: \n 1:GoogleAI \n 2:ChatGPT");
 public class Main {
     static String aiVendor = "";
-    static String content = "empty";
-    static String contentToReturn = "";
+    static List<String> fetchedApiContent = new ArrayList<>(); // 0 index has full content with metadata, 1 index has predicted content
+
+    static{
+        fetchedApiContent.add("empty");
+        fetchedApiContent.add("empty");
+    }
 
     public static void main(String args[]) throws IOException, InterruptedException {
         System.out.println("Main is running");
@@ -44,27 +48,12 @@ public class Main {
             default:;
         }
 
-        System.out.println("Displaying result \n");
-        //System.out.println(content);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-        Map<String, Object> contentMap = new Gson().fromJson(content, mapType);
-        //System.out.println(contentMap);
+        display();//for testing results on consolde
+    }
 
-        for( Map.Entry<String, Object> me: contentMap.entrySet()){
-           String key = me.getKey();
-           String value = me.getValue().toString();
-//           System.out.println("**** key:" + key);
-//           System.out.println(value);
-            if(key.equals("predictions")){
-                //System.out.println(value);
-                String tokens[] = value.split(":");
-                for(int i=1; i<tokens.length; i++){
-                    //System.out.println(tokens[i]);
-                    contentToReturn = contentToReturn + tokens[i] + "\n";
-                }
-            }
-        }
-        System.out.println(contentToReturn.trim());
+    private static void display(){
+        System.out.println("Displaying results fetched from: " +  aiVendor);
+        System.out.println(fetchedApiContent.get(1));
     }
 
     private static String getAIVendor() {
@@ -114,8 +103,26 @@ public class Main {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            //System.out.println("Mytest Response: "+ response.body());
-            content = response.body();
+            fetchedApiContent.set(0,response.body()); //0 index is set with full response with meta data
+
+
+            //Organizing content received from GoogleAI
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> contentMap = new Gson().fromJson(fetchedApiContent.get(0), mapType);
+
+            String predictedContent = "";
+            for( Map.Entry<String, Object> me: contentMap.entrySet()){
+                String key = me.getKey();
+                String value = me.getValue().toString();
+                if(key.equals("predictions")){
+                    String tokens[] = value.split(":");
+                    for(int i=1; i<tokens.length; i++){
+                        predictedContent = predictedContent + tokens[i] + "\n";
+                    }
+                }
+            }
+
+            fetchedApiContent.set(1, predictedContent.trim());//1 index is set with predicted content
         }
     }
 
@@ -177,7 +184,8 @@ public class Main {
 
     //**************** ChatGPT related begins ****************
     private static void processVendorChatGPT(){
-        content = "processing ChatGPT...";
+        fetchedApiContent.set(0, "processing ChatGPT...");
+        fetchedApiContent.set(1, "processing ChatGPT...");
     }
     //**************** ChatGPT related ends ****************
 }
