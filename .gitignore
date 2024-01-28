@@ -30,7 +30,9 @@ A_VertexAiRestApi/build
 A_VertexAiRestApi/gradle
 A_VertexAiRestApi/*.gradle
 A_VertexAiRestApi/gradlew*
+A_VertexAiRestApi/src/main/resources/nodal-skein-412018-b579dea7347f.json
 
 #NodeJS Visual Studio Code
 B_ChatGPTApiWithNode/node_modules
+B_ChatGPTApiWithNode/*.env
 
