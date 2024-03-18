@@ -1,0 +1,18 @@
+.whitenText {
+  color: #ffffff;
+}
+
+.centerAlign {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.textBolder{
+  font-weight: bold;
+}
+
+.leftAligner{
+  text-align: left;
+}

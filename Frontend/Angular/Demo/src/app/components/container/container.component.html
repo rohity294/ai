@@ -1,0 +1,11 @@
+<span>Click card to explore!</span><br><br>
+<div class="d-flex justify-content-space-between">
+  <div *ngFor="let item of cards; index as i">
+    <app-card
+      [title]="item.title"
+      [brief]="item.brief"
+      [myImagePath]="item.myImagePath"
+      (dataToParent)="receiveDataFromChild($event)"
+    ></app-card>
+  </div>
+</div>
