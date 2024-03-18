@@ -28,3 +28,11 @@ Code/Backend/Java/Demo/src/main/resources/do_not_commit
 Code/Backend/Java/Demo/.mvn/*
 Code/Backend/Java/Demo/mvnw
 Code/Backend/Java/Demo/mvnw.cmd
+Code/Frontend/Angular/Demo/.angular
+Code/Frontend/Angular/Demo/.vscode
+Code/Frontend/Angular/Demo/node_modules
+
+
+
+
+
