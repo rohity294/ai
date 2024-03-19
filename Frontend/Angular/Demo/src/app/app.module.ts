@@ -10,7 +10,8 @@ import { FinwiseComponent } from './components/ai-components/finwise/finwise.com
 import { FormsModule } from '@angular/forms';
 import { QuestionComponent } from './components/question/question.component';
 import { AnswerComponent } from './components/answer/answer.component';
-import { HttpClientModule  } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { IPrepComponent } from './components/ai-components/iprep/iprep.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { HttpClientModule  } from '@angular/common/http';
     SplitFirstPartPipe,
     FinwiseComponent,
     QuestionComponent,
-    AnswerComponent
+    AnswerComponent,
+    IPrepComponent
   ],
   imports: [
     BrowserModule,

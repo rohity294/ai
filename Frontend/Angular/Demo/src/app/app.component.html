@@ -531,12 +531,12 @@ src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd
   </svg>
 </div>
 
-<div class="leftAligner">
-  <app-finwise
-    *ngIf="
-      selectedAIApplication !== 'none' && selectedAIApplication == 'Finwise'
-    "
-  ></app-finwise>
+<div class="leftAligner" *ngIf="selectedAIApplication === 'Finwise'">
+  <app-finwise ></app-finwise>
+</div>
+
+<div class="leftAligner" *ngIf="selectedAIApplication === 'IPrep'">
+  <app-iprep ></app-iprep>
 </div>
 
 <router-outlet></router-outlet>

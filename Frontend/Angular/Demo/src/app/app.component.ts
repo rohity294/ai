@@ -26,7 +26,7 @@ export class AppComponent {
 
   receiveDataFromChild(data: string): void {
     this.selectedAIApplication = data;
-    //console.log(this.selectedAIApplication);
+    console.log(this.selectedAIApplication);
     this.showAIApplicationsListing = false;
   }
 
