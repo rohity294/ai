@@ -12,6 +12,7 @@ import { QuestionComponent } from './components/question/question.component';
 import { AnswerComponent } from './components/answer/answer.component';
 import { HttpClientModule } from '@angular/common/http';
 import { IPrepComponent } from './components/ai-components/iprep/iprep.component';
+import { SpeechToTextCapturerComponent } from './components/ai-components/speech-to-text-capturer/speech-to-text-capturer.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { IPrepComponent } from './components/ai-components/iprep/iprep.component
     FinwiseComponent,
     QuestionComponent,
     AnswerComponent,
-    IPrepComponent
+    IPrepComponent,
+    SpeechToTextCapturerComponent
   ],
   imports: [
     BrowserModule,

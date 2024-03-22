@@ -539,4 +539,8 @@ src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd
   <app-iprep ></app-iprep>
 </div>
 
+<div class="leftAligner" *ngIf="selectedAIApplication === 'SpeechToText'">
+  <app-speech-to-text-capturer></app-speech-to-text-capturer>
+</div>
+
 <router-outlet></router-outlet>
