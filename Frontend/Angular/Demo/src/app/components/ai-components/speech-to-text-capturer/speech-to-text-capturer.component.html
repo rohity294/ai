@@ -12,7 +12,10 @@
       <div class="text-box" contenteditable="true" *ngFor="let sentence of sentences">
         {{ sentence }}
       </div>
-      <app-question></app-question>
+     
+      <div *ngIf="isQuestionScreeningPassed">
+        <app-answer [parsedGoogleDataResponse]="parsedGoogleDataResponse"></app-answer>
+      </div>
       <!--text box which will contain spoken text -->
       <button
         *ngIf="!listening"
