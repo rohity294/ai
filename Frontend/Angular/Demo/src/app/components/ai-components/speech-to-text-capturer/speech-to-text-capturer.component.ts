@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { GoogleDataService } from 'src/app/services/api/google-data.service';
+import { OpenAIDataService } from 'src/app/services/api/openai-data.service';
 import { QuestionHandlingService } from 'src/app/services/question-handling.service';
 import { SpeechService } from 'src/app/services/speech.service';
 
@@ -15,12 +15,12 @@ export class SpeechToTextCapturerComponent {
   inputQuestion: string = '';
   isQuestionSubmitted: boolean = false;
   isQuestionScreeningPassed: boolean = false;
-  googleDataResponse: any;
-  parsedGoogleDataResponse: any;
+  openAIDataResponse: any;
+  parsedOpenAIDataResponse: any;
 
   constructor(private speechService: SpeechService,
     private questionHandlingService: QuestionHandlingService,
-    private googleDataService: GoogleDataService) { }
+    private openAIDataService: OpenAIDataService) { }
 
   startListening() {
     //console.log("mic clicked!!");
@@ -42,15 +42,15 @@ export class SpeechToTextCapturerComponent {
     if (this.questionHandlingService.screenQuestion(this.inputQuestion)) {
       this.isQuestionScreeningPassed = true;
       //invoke api
-      await this.googleDataService.postData(this.inputQuestion).then(response => {
+      await this.openAIDataService.postData(this.inputQuestion).then(response => {
         //console.log(response);//gives value
-        this.googleDataResponse = response;
+        this.openAIDataResponse = response;
       });
       //console.log(this.googleDataResponse);//gives value due to await on line above
     }
     //console.log(this.googleDataResponse);
     //console.log("*****");
     //console.log(this.googleDataResponse.predictions[0].content);
-    this.parsedGoogleDataResponse = this.googleDataResponse.predictions[0].content;
+    this.parsedOpenAIDataResponse = this.openAIDataResponse.choices[0].message.content;
   }
 }

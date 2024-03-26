@@ -6,9 +6,9 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./answer.component.css']
 })
 export class AnswerComponent {
-  @Input() parsedGoogleDataResponse:any;
+  @Input() parsedOpenAIDataResponse: any;
 
-  ngOnInit(){
+  ngOnInit() {
     console.log("component initialized");
   }
 }

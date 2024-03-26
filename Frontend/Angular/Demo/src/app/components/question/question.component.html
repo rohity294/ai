@@ -2,7 +2,14 @@
   <form (ngSubmit)="submitForm()">
     <div class="form-group">
       <label for="inputQuestion">Please type your question here</label>
-      <input type="text" class="form-control" id="inputQuestion" [(ngModel)]="inputQuestion" name="inputQuestion" required>
+      <input
+        type="text"
+        class="form-control"
+        id="inputQuestion"
+        [(ngModel)]="inputQuestion"
+        name="inputQuestion"
+        required
+      />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
@@ -10,6 +17,7 @@
 </div>
 
 <div *ngIf="isQuestionScreeningPassed">
-  <app-answer [parsedGoogleDataResponse]="parsedGoogleDataResponse"></app-answer>
+  <app-answer
+    [parsedOpenAIDataResponse]="parsedOpenAIDataResponse"
+  ></app-answer>
 </div>
-

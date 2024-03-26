@@ -5,10 +5,10 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class GoogleDataService {
+export class OpenAIDataService {
 
-  private googleApiUrl = 'http://localhost:8080/api/v1/google-data'; // Replace with your API endpoint
-
+  private openAIApiUrl = 'http://localhost:8080/api/v1/openai-data'; // Replace with your API endpoint
+  ///api/openai-v1-data
   // Define your request headers
   private requestHeaders = new HttpHeaders({
     //'Content-Type': 'application/json'
@@ -17,13 +17,13 @@ export class GoogleDataService {
   constructor(private http: HttpClient) { }
 
   async getData() {
-    return await this.http.get<any>(this.googleApiUrl, {
+    return await this.http.get<any>(this.openAIApiUrl, {
       headers: this.requestHeaders
     }).toPromise();
   }
 
   postData(prompt: String) {
-    return this.http.post<any>(this.googleApiUrl, prompt).toPromise();
+    return this.http.post<any>(this.openAIApiUrl, prompt).toPromise();
   }
 }
 
