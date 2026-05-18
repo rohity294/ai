@@ -1,0 +1,58 @@
+# GitHub workflows
+.github/
+
+# VS Code
+.vscode/
+
+# Project metadata (local config/spec files)
+.specify/
+
+# Node dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+out/
+
+# Vercel / deployment
+.vercel/
+.vercel_build_output/
+.vercelignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Caches & coverage
+.cache/
+.parcel-cache/
+.nyc_output/
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Python venv
+venv/
+
+# Keep these project assets committed (data + config):
+# - src/data/*.json (canonical data files)
+# - vercel.json (deployment routing)
+
