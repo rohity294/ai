@@ -7,7 +7,7 @@
   {"id": "m5", "name": "Microsoft Certified: DevOps Engineer Expert", "provider": "Microsoft", "desc": "Designing and implementing DevOps practices to deliver and monitor applications on Azure."},
   
   {"id": "o1", "name": "Oracle Certified Java Professional", "provider": "Oracle", "desc": "Proficiency in Java SE programming and core Java development skills."},
-  {"id": "o2", "name": "Oracle DBA Certified Associate", "provider": "Oracle", "desc": "Foundational SQL skills for querying and managing Oracle databases."},
+  {"id": "o2", "name": "Oracle DBA Certified Associate", "provider": "Oracle", "desc": "Foundational SQL and DBA skills for querying and managing Oracle databases."},
 
   {"id": "g1", "name": "Google Cloud Professional Developer", "provider": "Google", "desc": "Designing, building, and managing scalable applications on Google Cloud Platform."},
 
