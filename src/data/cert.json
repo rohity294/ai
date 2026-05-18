@@ -1,0 +1,17 @@
+[
+  {"id": "m6", "name": "Microsoft Certified Trainer(MCT)", "provider": "Microsoft", "desc": "Authorized Microsoft Instructor certified to deliver official Microsoft training."},
+  {"id": "m1", "name": "Azure Fundamentals", "provider": "Microsoft", "desc": "Knowledge of Azure cloud concepts and core Microsoft Azure services."},
+  {"id": "m2", "name": "Azure AI Fundamentals", "provider": "Microsoft", "desc": "Understanding of Azure AI/ML concepts and Azure AI services (cognitive services, ML)."},
+  {"id": "m3", "name": "Microsoft 365 Certified: Copilot and Agent Administration Fundamentals", "provider": "Microsoft", "desc": "Foundational skills for administering Microsoft 365 Copilot and support agent tooling."},
+  {"id": "m4", "name": "Microsoft Certified: Azure Developer Associate", "provider": "Microsoft", "desc": "Developing, deploying, and maintaining cloud applications and services on Microsoft Azure."},
+  {"id": "m5", "name": "Microsoft Certified: DevOps Engineer Expert", "provider": "Microsoft", "desc": "Designing and implementing DevOps practices to deliver and monitor applications on Azure."},
+  
+  {"id": "o1", "name": "Oracle Certified Java Professional", "provider": "Oracle", "desc": "Proficiency in Java SE programming and core Java development skills."},
+  {"id": "o2", "name": "Oracle SQL Certified Associate", "provider": "Oracle", "desc": "Foundational SQL skills for querying and managing Oracle databases."},
+
+  {"id": "g1", "name": "Google Cloud Professional Developer", "provider": "Google", "desc": "Designing, building, and managing scalable applications on Google Cloud Platform."},
+
+  {"id": "s1", "name": "Professional Scrum Master", "provider": "ScrumAlliance", "desc": "Mastery of Scrum principles and facilitation of Scrum teams in the Scrum Master role."},
+
+  {"id": "c1", "name": "CompTIA Virtual Trainer", "provider": "CompTIA", "desc": "Skills for delivering technical training and virtual instruction aligned to CompTIA standards."}
+]
