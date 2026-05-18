@@ -120,7 +120,7 @@ function renderContact(){
       <h2>Contact</h2>
       <p class="small">Connect via LinkedIn:</p>
       <ul class="contact-list">
-        <li><a href="https://www.linkedin.com/in/rohit-kumar-singh" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/rohit-kumar-singh</a></li>
+        <li><a href="https://www.linkedin.com/in/rohitsingh1/" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/rohit-kumar-singh</a></li>
       </ul>
     </section>
   `;
