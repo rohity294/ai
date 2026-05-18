@@ -156,3 +156,14 @@ html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-
 .about-card{background:var(--card);padding:18px;border-radius:12px}
 .contact-list{list-style:none;padding:0;margin:0}
 .contact-list li{margin:8px 0}
+
+/* Contact card styling */
+.contact-card{}.about-card.contact-card{padding:20px;display:inline-block;text-align:center}
+.about-card.contact-card h2{margin-bottom:8px}
+.btn-linkedin{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;color:#fff;text-decoration:none;font-weight:700;background:linear-gradient(90deg,#0077b5,#0a66c2);box-shadow:0 10px 30px rgba(10,102,194,0.18);transition:transform .12s,box-shadow .12s,opacity .12s}
+.btn-linkedin:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(10,102,194,0.22)}
+.btn-linkedin:active{transform:translateY(-1px)}
+.btn-linkedin:focus{outline:3px solid rgba(6,95,170,0.28);outline-offset:4px}
+
+/* small visual tweak for mobile */
+@media (max-width:640px){.btn-linkedin{width:100%;justify-content:center;padding:12px 16px}}

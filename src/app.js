@@ -118,9 +118,11 @@ function renderContact(){
   app.innerHTML = `
     <section class="about-card">
       <h2>Contact</h2>
-      <p class="small">Connect via LinkedIn:</p>
+      <p class="sr-only">Connect via LinkedIn</p>
       <ul class="contact-list">
-        <li><a href="https://www.linkedin.com/in/rohitsingh1/" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/rohit-kumar-singh</a></li>
+        <li>
+          <a class="btn-linkedin" href="https://www.linkedin.com/in/rohitsingh1/" target="_blank" rel="noopener noreferrer" title="Connect on LinkedIn">Connect On LinkedIn</a>
+        </li>
       </ul>
     </section>
   `;
