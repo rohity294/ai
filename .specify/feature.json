@@ -1,0 +1,10 @@
+{
+  "feature_directory": "specs/001-provider-logo-banners",
+  "features": [
+    "specs/001-provider-logo-banners",
+    "specs/002-uniform-background",
+    "specs/003-logo-only-headers",
+    "specs/004-content-and-styling-update",
+    "specs/005-mct-card-style"
+  ]
+}

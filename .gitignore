@@ -1,11 +1,11 @@
 # GitHub workflows
-.github/
+# .github/
 
 # VS Code
 .vscode/
 
 # Project metadata (local config/spec files)
-.specify/
+# .specify/
 
 # Node dependencies
 node_modules/
