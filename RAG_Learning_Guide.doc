@@ -1,0 +1,86 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset="utf-8">
+            <title>RAG Learning Guide</title>
+            <!--[if gte mso 9]>
+            <xml>
+                <w:WordDocument>
+                    <w:View>Print</w:View>
+                    <w:Zoom>100</w:Zoom>
+                    <w:DoNotOptimizeForBrowser/>
+                </w:WordDocument>
+            </xml>
+            <![endif]-->
+            <style>
+                body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.5; color: #333; }
+                h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                h2 { color: #34495e; margin-top: 25px; border-left: 5px solid #3498db; padding-left: 10px; }
+                table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                th, td { border: 1px solid #bdc3c7; padding: 12px; text-align: left; }
+                th { background-color: #f8f9fa; font-weight: bold; }
+                blockquote { border-left: 4px solid #bdc3c7; padding: 10px 20px; margin: 20px 0; background: #fdfdfd; font-style: italic; }
+                p, li { font-size: 11pt; }
+            </style>
+        </head>
+        <body>
+            
+    <h1>Retrieval-Augmented Generation (RAG) Learning Guide</h1>
+    <p><i>Version 1.0 - Implementation Standards</i></p>
+    
+    <blockquote>
+        RAG is a technique that grants Large Language Models (LLMs) access to external, 
+        authoritative knowledge bases before generating a response, ensuring grounding 
+        in specific, up-to-date data.
+    </blockquote>
+
+    <h2>1. Core Architecture</h2>
+    <p>The RAG pipeline typically consists of three primary stages:</p>
+    <ul>
+        <li><strong>Ingestion:</strong> Processing raw data into manageable chunks and storing embeddings in a vector database.</li>
+        <li><strong>Retrieval:</strong> Searching the database for relevant context based on user queries.</li>
+        <li><strong>Generation:</strong> Passing the retrieved context along with the prompt to the LLM.</li>
+    </ul>
+
+    <h2>2. Comparison: RAG vs. Fine-Tuning</h2>
+    <table>
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>Feature</th>
+                <th>RAG</th>
+                <th>Fine-Tuning</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Knowledge Updates</td>
+                <td>Dynamic (Real-time)</td>
+                <td>Static (Requires re-train)</td>
+            </tr>
+            <tr>
+                <td>Hallucination Risk</td>
+                <td>Lower (Grounded)</td>
+                <td>Higher</td>
+            </tr>
+            <tr>
+                <td>Transparency</td>
+                <td>High (Citations possible)</td>
+                <td>Low (Black box)</td>
+            </tr>
+            <tr>
+                <td>Computational Cost</td>
+                <td>Medium (Inference time)</td>
+                <td>High (Training time)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Evaluation Metrics</h2>
+    <p>To ensure high quality, developers track the <b>RAG Triad</b>:</p>
+    <ol>
+        <li><strong>Context Relevance:</strong> Is the retrieved context actually useful for the query?</li>
+        <li><strong>Groundedness:</strong> Is the answer derived solely from the provided context?</li>
+        <li><strong>Answer Relevance:</strong> Does the answer address the user's intent?</li>
+    </ol>
+
+        </body>
+        </html>
