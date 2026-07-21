@@ -23,6 +23,9 @@
 hs_err_pid*
 replay_pid*
 
+# Maven build output
+target/
+
 #my custom exclusion 
 Code/Backend/Java/Demo/src/main/resources/do_not_commit
 Code/Backend/Java/Demo/.mvn/*

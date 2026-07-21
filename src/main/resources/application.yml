@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+openai:
+  api-key: ${OPENAI_API_KEY:}
+  chat-model: gpt-4o-mini
+  embedding-model: text-embedding-3-small
+  temperature: 0.2
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
