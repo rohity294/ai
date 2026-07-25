@@ -32,6 +32,10 @@ Code/Frontend/Angular/Demo/.angular
 Code/Frontend/Angular/Demo/.vscode
 Code/Frontend/Angular/Demo/node_modules
 
+# OpenClaw local secrets
+openclaw-deploy/.env-local
+openclaw-deploy/.env
+
 
 
 
