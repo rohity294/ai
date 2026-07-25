@@ -35,6 +35,7 @@ Code/Frontend/Angular/Demo/node_modules
 # OpenClaw local secrets
 openclaw-deploy/.env-local
 openclaw-deploy/.env
+openclaw-deploy/.env-linkedin-automation.local
 
 
 

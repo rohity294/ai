@@ -35,8 +35,10 @@ RUN apt-get update \
 # Copy launcher and app assets
 COPY --from=java-build /build/target/openclaw-launcher-1.0.0.jar /app/openclaw-launcher.jar
 COPY config/openclaw.json /app/config/openclaw.json
+COPY linkedin-worker /app/linkedin-worker
 COPY docker/healthcheck.sh /app/docker/healthcheck.sh
-RUN chmod +x /app/docker/healthcheck.sh
+COPY docker/start-services.sh /app/docker/start-services.sh
+RUN chmod +x /app/docker/healthcheck.sh /app/docker/start-services.sh
 
 # Persist OpenClaw state (sessions/credentials)
 VOLUME ["/data/.openclaw"]
@@ -45,4 +47,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD ["/app/docker/healthcheck.sh"]
 
-ENTRYPOINT ["java", "-jar", "/app/openclaw-launcher.jar"]
+ENTRYPOINT ["/app/docker/start-services.sh"]

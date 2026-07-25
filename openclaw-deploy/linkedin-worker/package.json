@@ -1,0 +1,13 @@
+{
+  "name": "openclaw-linkedin-worker",
+  "version": "1.0.0",
+  "description": "Minimal approval-gated LinkedIn posting worker",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js"
+  }
+}

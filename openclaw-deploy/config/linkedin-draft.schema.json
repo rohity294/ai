@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/linkedin-draft.schema.json",
+  "title": "LinkedIn Approval Draft",
+  "type": "object",
+  "required": [
+    "draftId",
+    "status",
+    "postText",
+    "hashtags",
+    "firstComment",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "draftId": {
+      "type": "string",
+      "pattern": "^DRAFT-[0-9]{8}-[0-9]{3}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "drafted",
+        "needs_approval",
+        "approved",
+        "rejected",
+        "posted"
+      ]
+    },
+    "postText": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 3000
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^#[A-Za-z0-9_]+$"
+      },
+      "minItems": 1,
+      "maxItems": 15
+    },
+    "firstComment": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 3000
+    },
+    "imagePrompt": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "approval": {
+      "type": "object",
+      "required": ["required"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "approvedBy": { "type": "string" },
+        "approvedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "linkedin": {
+      "type": "object",
+      "properties": {
+        "authorUrn": { "type": "string" },
+        "postUrn": { "type": "string" },
+        "postUrl": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}
