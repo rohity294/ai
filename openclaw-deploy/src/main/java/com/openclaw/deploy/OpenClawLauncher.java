@@ -12,7 +12,8 @@ public class OpenClawLauncher {
     public static void main(String[] args) throws IOException, InterruptedException {
         String openclawConfigPath = getEnvOrDefault("OPENCLAW_CONFIG_PATH", "/app/config/openclaw.json");
         String healthPort = getEnvOrDefault("PORT", "8080");
-        String bindMode = getEnvOrDefault("OPENCLAW_GATEWAY_BIND", "auto");
+        String bindMode = getEnvOrDefault("OPENCLAW_GATEWAY_BIND", "lan");
+        String gatewayToken = System.getenv("OPENCLAW_GATEWAY_TOKEN");
 
         List<String> command = new ArrayList<>();
         command.add("openclaw");
@@ -22,6 +23,10 @@ public class OpenClawLauncher {
         command.add(healthPort);
         command.add("--bind");
         command.add(bindMode);
+        if (gatewayToken != null && !gatewayToken.isBlank()) {
+            command.add("--auth");
+            command.add("token");
+        }
         command.add("--allow-unconfigured");
 
         ProcessBuilder processBuilder = new ProcessBuilder(command);
