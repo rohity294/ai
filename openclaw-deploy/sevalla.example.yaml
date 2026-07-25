@@ -1,0 +1,25 @@
+# Example Sevalla app configuration for OpenClaw Java image
+# Rename to match your platform's expected config filename if needed.
+
+service:
+  name: openclaw-linkedin-agent
+  type: web
+
+build:
+  context: ./openclaw-deploy
+  dockerfile: ./openclaw-deploy/Dockerfile
+
+runtime:
+  port: 8080
+  env:
+    - name: PORT
+      value: "8080"
+    - name: OPENCLAW_CONFIG_PATH
+      value: /app/config/openclaw.json
+    - name: OPENAI_API_KEY
+      valueFrom: secret:OPENAI_API_KEY
+
+storage:
+  volumes:
+    - name: openclaw-state
+      mountPath: /data/.openclaw

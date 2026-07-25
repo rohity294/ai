@@ -1,0 +1,13 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/data/.openclaw/.openclaw/workspace"
+    }
+  },
+  "gateway": {
+    "mode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.7.1-2"
+  }
+}
