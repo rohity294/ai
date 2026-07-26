@@ -1,4 +1,5 @@
 import http from "node:http";
+import https from "node:https";
 import { randomUUID } from "node:crypto";
 import { URL } from "node:url";
 
@@ -15,10 +16,12 @@ const linkedinOauthBase = process.env.LINKEDIN_OAUTH_BASE_URL || "https://www.li
 const linkedinClientId = process.env.LINKEDIN_CLIENT_ID || "";
 const linkedinClientSecret = process.env.LINKEDIN_CLIENT_SECRET || "";
 const linkedinOauthRedirectUri = process.env.LINKEDIN_OAUTH_REDIRECT_URI || "";
-const linkedinOauthScopes = process.env.LINKEDIN_OAUTH_SCOPES || "openid profile email w_member_social";
+const linkedinOauthScopes = normalizeOauthScopes(process.env.LINKEDIN_OAUTH_SCOPES || "w_member_social");
 const linkedinOauthStateTtlSec = parseInt(process.env.LINKEDIN_OAUTH_STATE_TTL_SEC || "600", 10);
 const linkedinOauthAutoRefresh = parseBool(process.env.LINKEDIN_OAUTH_AUTO_REFRESH, true);
 const openclawUpstreamUrl = process.env.OPENCLAW_UPSTREAM_URL || "";
+const upstreamConnectRetries = parseInt(process.env.OPENCLAW_UPSTREAM_RETRIES || "3", 10);
+const upstreamRetryDelayMs = parseInt(process.env.OPENCLAW_UPSTREAM_RETRY_DELAY_MS || "200", 10);
 const redisUrl = process.env.UPSTASH_REDIS_REST_URL || "";
 const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || "";
 const redisKeyPrefix = process.env.REDIS_KEY_PREFIX || "openclaw:linkedin";
@@ -45,6 +48,10 @@ const server = http.createServer(async (req, res) => {
 
     if (route.name === "health") {
       return sendJson(res, 200, { ok: true, service: "linkedin-worker" });
+    }
+
+    if (route.name === "ready") {
+      return await handleReady(res);
     }
 
     if (route.name === "createDraft") {
@@ -97,6 +104,10 @@ const server = http.createServer(async (req, res) => {
       return await handleOauthRefresh(res);
     }
 
+    if (route.name === "oauthResolveAuthor") {
+      return await handleOauthResolveAuthor(res);
+    }
+
     return sendJson(res, 404, { error: "not_found" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown_error";
@@ -112,8 +123,21 @@ server.listen(port, host, () => {
   }
 });
 
+server.on("upgrade", (req, socket, head) => {
+  if (!openclawUpstreamUrl) {
+    socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+    socket.destroy();
+    return;
+  }
+
+  proxyWebSocketToOpenClaw(req, socket, head).catch(() => {
+    socket.write("HTTP/1.1 502 Bad Gateway\r\n\r\n");
+    socket.destroy();
+  });
+});
+
 function isPublicRoute(routeName) {
-  return routeName === "oauthCallback" || routeName === "health";
+  return routeName === "oauthCallback" || routeName === "health" || routeName === "ready";
 }
 
 function isAuthorized(req) {
@@ -137,6 +161,9 @@ function matchRoute(method, urlString) {
   if (method === "GET" && path === "/worker/health") {
     return { name: "health", params: {} };
   }
+  if (method === "GET" && path === "/worker/ready") {
+    return { name: "ready", params: {} };
+  }
   if (method === "GET" && path === "/v1/oauth/linkedin/start") {
     return { name: "oauthStart", params: {} };
   }
@@ -151,6 +178,9 @@ function matchRoute(method, urlString) {
   }
   if (method === "POST" && path === "/v1/oauth/linkedin/refresh") {
     return { name: "oauthRefresh", params: {} };
+  }
+  if (method === "POST" && path === "/v1/oauth/linkedin/resolve-author") {
+    return { name: "oauthResolveAuthor", params: {} };
   }
 
   const matches = path.match(/^\/v1\/drafts\/([^/]+)(?:\/(approve|reject|post))?$/);
@@ -186,11 +216,20 @@ async function proxyToOpenClaw(req, res) {
   delete headers.host;
   delete headers["content-length"];
 
-  const response = await fetch(targetUrl, {
-    method,
-    headers,
-    body: requestBody
-  });
+  let response;
+  try {
+    response = await fetchUpstreamWithRetry(targetUrl, {
+      method,
+      headers,
+      body: requestBody
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown_error";
+    return sendJson(res, 503, {
+      error: "upstream_unavailable",
+      message: `OpenClaw is still starting or unavailable: ${message}`
+    });
+  }
 
   const responseBody = await response.arrayBuffer();
   const responseHeaders = {};
@@ -203,6 +242,137 @@ async function proxyToOpenClaw(req, res) {
 
   res.writeHead(response.status, responseHeaders);
   res.end(Buffer.from(responseBody));
+}
+
+async function handleReady(res) {
+  if (!openclawUpstreamUrl) {
+    return sendJson(res, 200, {
+      ok: true,
+      ready: true,
+      service: "linkedin-worker",
+      upstream: null,
+      reason: "no_upstream_configured"
+    });
+  }
+
+  const targetUrl = new URL("/health", openclawUpstreamUrl).toString();
+  try {
+    const response = await fetch(targetUrl, { method: "GET" });
+    if (!response.ok) {
+      return sendJson(res, 503, {
+        ok: false,
+        ready: false,
+        service: "linkedin-worker",
+        upstream: openclawUpstreamUrl,
+        statusCode: response.status
+      });
+    }
+    return sendJson(res, 200, {
+      ok: true,
+      ready: true,
+      service: "linkedin-worker",
+      upstream: openclawUpstreamUrl
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown_error";
+    return sendJson(res, 503, {
+      ok: false,
+      ready: false,
+      service: "linkedin-worker",
+      upstream: openclawUpstreamUrl,
+      error: message
+    });
+  }
+}
+
+async function fetchUpstreamWithRetry(targetUrl, requestOptions) {
+  const attempts = Number.isFinite(upstreamConnectRetries) && upstreamConnectRetries > 0
+    ? upstreamConnectRetries
+    : 1;
+  const delayMs = Number.isFinite(upstreamRetryDelayMs) && upstreamRetryDelayMs >= 0
+    ? upstreamRetryDelayMs
+    : 0;
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fetch(targetUrl, requestOptions);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts) {
+        break;
+      }
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+  }
+
+  const message = lastError instanceof Error ? lastError.message : "unknown_error";
+  throw new Error(`Upstream fetch failed for ${targetUrl} after ${attempts} attempts: ${message}`);
+}
+
+async function proxyWebSocketToOpenClaw(req, clientSocket, clientHead) {
+  const targetUrl = new URL(req.url || "/", openclawUpstreamUrl);
+  const transport = targetUrl.protocol === "https:" ? https : http;
+
+  const upstreamReq = transport.request({
+    protocol: targetUrl.protocol,
+    hostname: targetUrl.hostname,
+    port: targetUrl.port || (targetUrl.protocol === "https:" ? 443 : 80),
+    method: req.method || "GET",
+    path: `${targetUrl.pathname}${targetUrl.search}`,
+    headers: {
+      ...req.headers,
+      host: targetUrl.host
+    }
+  });
+
+  upstreamReq.on("upgrade", (upstreamRes, upstreamSocket, upstreamHead) => {
+    const statusCode = upstreamRes.statusCode || 101;
+    const statusMessage = upstreamRes.statusMessage || "Switching Protocols";
+    let headerBlock = `HTTP/1.1 ${statusCode} ${statusMessage}\r\n`;
+
+    for (const [key, value] of Object.entries(upstreamRes.headers)) {
+      if (value == null) {
+        continue;
+      }
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          headerBlock += `${key}: ${item}\r\n`;
+        }
+      } else {
+        headerBlock += `${key}: ${value}\r\n`;
+      }
+    }
+    headerBlock += "\r\n";
+    clientSocket.write(headerBlock);
+
+    if (upstreamHead?.length) {
+      clientSocket.write(upstreamHead);
+    }
+    if (clientHead?.length) {
+      upstreamSocket.write(clientHead);
+    }
+
+    upstreamSocket.on("error", () => clientSocket.destroy());
+    clientSocket.on("error", () => upstreamSocket.destroy());
+
+    clientSocket.pipe(upstreamSocket);
+    upstreamSocket.pipe(clientSocket);
+  });
+
+  upstreamReq.on("response", (response) => {
+    clientSocket.write(`HTTP/1.1 ${response.statusCode || 502} ${response.statusMessage || "Bad Gateway"}\r\n\r\n`);
+    clientSocket.destroy();
+  });
+
+  upstreamReq.on("error", () => {
+    clientSocket.write("HTTP/1.1 502 Bad Gateway\r\n\r\n");
+    clientSocket.destroy();
+  });
+
+  upstreamReq.end();
 }
 
 async function handleCreateDraft(body, res) {
@@ -335,7 +505,7 @@ async function handleCommand(body, res) {
   if (!parsed) {
     return sendJson(res, 400, {
       error: "invalid_command",
-      message: "Supported: draft, revise, approve, reject, post, status"
+      message: "Supported: draft, revise, approve, reject, post, status, oauth connect, oauth status"
     });
   }
 
@@ -354,7 +524,26 @@ async function handleCommand(body, res) {
   }
 
   if (parsed.name === "status") {
+    if (parsed.draftId.toLowerCase() === "oauth") {
+      if ((parsed.rest || "").toLowerCase() === "connect") {
+        return await handleOauthConnectCommand(res);
+      }
+      return await handleOauthStatus(res);
+    }
     return await handleGetDraft(parsed.draftId, res);
+  }
+
+  if (parsed.name === "oauth") {
+    if (parsed.action === "connect") {
+      return await handleOauthConnectCommand(res);
+    }
+    if (parsed.action === "status") {
+      return await handleOauthStatus(res);
+    }
+    return sendJson(res, 400, {
+      error: "invalid_command",
+      message: "OAuth commands: oauth connect, oauth status"
+    });
   }
 
   if (parsed.name === "approve") {
@@ -481,6 +670,23 @@ async function handleWhatsAppOnboarding(res) {
   });
 }
 
+async function handleOauthConnectCommand(res) {
+  if (!linkedinClientId || !linkedinClientSecret || !linkedinOauthRedirectUri) {
+    return sendJson(res, 500, {
+      error: "oauth_config_missing",
+      message: "LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET, LINKEDIN_OAUTH_REDIRECT_URI are required"
+    });
+  }
+
+  const payload = await buildOauthStartPayload();
+  return sendJson(res, 200, {
+    type: "oauth_connect",
+    message: payload.connectUrl,
+    connectUrl: payload.connectUrl,
+    state: payload.state
+  });
+}
+
 async function buildOauthStartPayload() {
   const state = randomUUID();
   await saveOauthState(state, { createdAt: Date.now() });
@@ -505,7 +711,8 @@ async function buildOauthStartPayload() {
 async function handleOauthCallback(requestUrl, res) {
   const error = requestUrl.searchParams.get("error");
   if (error) {
-    return sendOauthHtml(res, 400, `LinkedIn OAuth failed: ${escapeHtml(error)}`);
+    const errorDescription = requestUrl.searchParams.get("error_description") || "";
+    return sendOauthHtml(res, 400, buildOauthErrorMessage(error, errorDescription));
   }
 
   const code = requestUrl.searchParams.get("code") || "";
@@ -526,10 +733,22 @@ async function handleOauthCallback(requestUrl, res) {
 }
 
 async function handleOauthStatus(res) {
-  const oauthToken = await loadOauthToken();
+  let oauthToken = await loadOauthToken();
+  oauthToken = await hydrateAuthorUrnFromToken(oauthToken);
   const auth = await resolveLinkedInAuth();
 
   if (!auth?.accessToken || !auth?.authorUrn) {
+    if (oauthToken?.accessToken) {
+      return sendJson(res, 200, {
+        connected: false,
+        source: "oauth",
+        reason: "author_urn_missing",
+        tokenPresent: true,
+        expiresAt: oauthToken?.expiresAt || null,
+        scope: oauthToken?.scope || ""
+      });
+    }
+
     return sendJson(res, 200, {
       connected: false,
       source: "none"
@@ -564,8 +783,40 @@ async function handleOauthRefresh(res) {
   });
 }
 
+async function handleOauthResolveAuthor(res) {
+  const oauthToken = await loadOauthToken();
+  if (!oauthToken?.accessToken) {
+    return sendJson(res, 400, {
+      error: "oauth_token_missing",
+      message: "No OAuth access token available. Run /v1/oauth/linkedin/start first."
+    });
+  }
+
+  const personId = await fetchLinkedInPersonId(oauthToken.accessToken);
+  if (!personId) {
+    return sendJson(res, 422, {
+      error: "author_urn_unresolved",
+      message: "Could not derive LinkedIn person id from current token. Set LINKEDIN_AUTHOR_URN manually as urn:li:person:<id>."
+    });
+  }
+
+  const hydrated = {
+    ...oauthToken,
+    authorUrn: `urn:li:person:${personId}`,
+    updatedAt: new Date().toISOString()
+  };
+  await saveOauthToken(hydrated);
+
+  return sendJson(res, 200, {
+    ok: true,
+    source: "oauth",
+    authorUrn: hydrated.authorUrn
+  });
+}
+
 async function resolveLinkedInAuth() {
   let oauthToken = await loadOauthToken();
+  oauthToken = await hydrateAuthorUrnFromToken(oauthToken);
 
   if (oauthToken?.accessToken) {
     if (linkedinOauthAutoRefresh && tokenIsStale(oauthToken) && oauthToken.refreshToken) {
@@ -590,6 +841,25 @@ async function resolveLinkedInAuth() {
   }
 
   return null;
+}
+
+async function hydrateAuthorUrnFromToken(oauthToken) {
+  if (!oauthToken?.accessToken || oauthToken?.authorUrn) {
+    return oauthToken;
+  }
+
+  const personId = await fetchLinkedInPersonId(oauthToken.accessToken);
+  if (!personId) {
+    return oauthToken;
+  }
+
+  const hydrated = {
+    ...oauthToken,
+    authorUrn: `urn:li:person:${personId}`,
+    updatedAt: new Date().toISOString()
+  };
+  await saveOauthToken(hydrated);
+  return hydrated;
 }
 
 function tokenIsStale(tokenInfo) {
@@ -669,9 +939,9 @@ async function normalizeOauthTokenResponse(json, previousToken = null) {
   let authorUrn = asString(previousToken?.authorUrn) || linkedinAuthorUrn;
   try {
     if (!authorUrn) {
-      const sub = await fetchLinkedInSub(accessToken);
-      if (sub) {
-        authorUrn = `urn:li:person:${sub}`;
+      const personId = await fetchLinkedInPersonId(accessToken);
+      if (personId) {
+        authorUrn = `urn:li:person:${personId}`;
       }
     }
   } catch {
@@ -691,6 +961,15 @@ async function normalizeOauthTokenResponse(json, previousToken = null) {
   };
 }
 
+async function fetchLinkedInPersonId(accessToken) {
+  const sub = await fetchLinkedInSub(accessToken);
+  if (sub) {
+    return sub;
+  }
+
+  return await fetchLinkedInMeId(accessToken);
+}
+
 async function fetchLinkedInSub(accessToken) {
   const response = await fetch(`${linkedinApiBase}/v2/userinfo`, {
     method: "GET",
@@ -706,6 +985,23 @@ async function fetchLinkedInSub(accessToken) {
 
   const data = await response.json();
   return asString(data?.sub);
+}
+
+async function fetchLinkedInMeId(accessToken) {
+  const response = await fetch(`${linkedinApiBase}/v2/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ...(linkedinApiVersion ? { "LinkedIn-Version": linkedinApiVersion } : {})
+    }
+  });
+
+  if (!response.ok) {
+    return "";
+  }
+
+  const data = await response.json();
+  return asString(data?.id);
 }
 
 async function loadOauthToken() {
@@ -784,6 +1080,34 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function normalizeOauthScopes(rawScopes) {
+  return Array.from(
+    new Set(
+      asString(rawScopes)
+        .split(/[\s,]+/)
+        .map((scope) => scope.trim())
+        .filter(Boolean)
+    )
+  ).join(" ");
+}
+
+function buildOauthErrorMessage(error, errorDescription) {
+  if (error === "unauthorized_scope_error") {
+    return [
+      "LinkedIn OAuth failed: unauthorized_scope_error.",
+      "One or more requested scopes are not enabled for this LinkedIn app.",
+      `Configured scopes: ${linkedinOauthScopes || "<empty>"}.`,
+      "Set LINKEDIN_OAUTH_SCOPES to only scopes approved for your app (for posting-only apps, start with: w_member_social), or enable matching LinkedIn products, then retry."
+    ].join(" ");
+  }
+
+  if (errorDescription) {
+    return `LinkedIn OAuth failed: ${error}. ${errorDescription}`;
+  }
+
+  return `LinkedIn OAuth failed: ${error}`;
+}
+
 function parseCommand(text) {
   const parts = text.trim().split(/\s+/);
   if (parts.length === 0) {
@@ -791,9 +1115,20 @@ function parseCommand(text) {
   }
 
   const name = parts[0].toLowerCase();
-  const supported = new Set(["draft", "revise", "approve", "reject", "post", "status"]);
+  const supported = new Set(["draft", "revise", "approve", "reject", "post", "status", "oauth"]);
   if (!supported.has(name)) {
     return null;
+  }
+
+  if (name === "oauth") {
+    if (parts.length < 2) {
+      return null;
+    }
+    const action = parts[1].toLowerCase();
+    if (action !== "connect" && action !== "status") {
+      return null;
+    }
+    return { name, action };
   }
 
   if (name === "draft") {
@@ -804,6 +1139,11 @@ function parseCommand(text) {
   if (name === "status" || name === "approve" || name === "post") {
     if (parts.length < 2) {
       return null;
+    }
+    if (name === "status") {
+      const draftId = parts[1];
+      const rest = text.trim().slice(parts[0].length + 1 + draftId.length).trim();
+      return { name, draftId, rest };
     }
     return { name, draftId: parts[1] };
   }

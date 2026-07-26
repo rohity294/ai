@@ -54,7 +54,9 @@ Render environment variables:
 - `LINKEDIN_CLIENT_ID` (required for OAuth)
 - `LINKEDIN_CLIENT_SECRET` (required for OAuth)
 - `LINKEDIN_OAUTH_REDIRECT_URI=https://<your-render-domain>/v1/oauth/linkedin/callback`
-- `LINKEDIN_OAUTH_SCOPES=openid profile email w_member_social`
+- `LINKEDIN_OAUTH_SCOPES=w_member_social`
+
+If LinkedIn redirects back with `unauthorized_scope_error`, your app does not have all requested scopes enabled. Start with `w_member_social` only, then add OpenID scopes (`openid profile email`) only after those products are approved in LinkedIn Developer Portal.
 
 OpenClaw/runtime environment variables:
 

@@ -52,7 +52,7 @@ docker run --rm -it \
   - `LINKEDIN_CLIENT_ID` (required for OAuth)
   - `LINKEDIN_CLIENT_SECRET` (required for OAuth; secret)
   - `LINKEDIN_OAUTH_REDIRECT_URI=https://<your-render-domain>/v1/oauth/linkedin/callback`
-  - `LINKEDIN_OAUTH_SCOPES=openid profile email w_member_social`
+  - `LINKEDIN_OAUTH_SCOPES=w_member_social`
   - `UPSTASH_REDIS_REST_URL` (recommended for durable state)
   - `UPSTASH_REDIS_REST_TOKEN` (recommended; secret)
   - `REDIS_KEY_PREFIX=openclaw:linkedin`
@@ -82,8 +82,12 @@ Set these env vars in Render:
 - `LINKEDIN_CLIENT_ID`
 - `LINKEDIN_CLIENT_SECRET`
 - `LINKEDIN_OAUTH_REDIRECT_URI=https://<your-render-domain>/v1/oauth/linkedin/callback`
-- `LINKEDIN_OAUTH_SCOPES=openid profile email w_member_social`
+- `LINKEDIN_OAUTH_SCOPES=w_member_social`
 - `LINKEDIN_OAUTH_AUTO_REFRESH=true`
+
+Note: If your LinkedIn app also has OpenID permissions enabled, you can extend scopes, for example:
+
+- `LINKEDIN_OAUTH_SCOPES=w_member_social openid profile email`
 
 OAuth flow:
 
@@ -92,6 +96,8 @@ OAuth flow:
 3. LinkedIn redirects to `/v1/oauth/linkedin/callback`.
 4. Worker exchanges code, stores token in Redis (or memory), and uses it for posting.
 5. Worker auto-refreshes token on post when refresh token is available.
+
+If callback shows `unauthorized_scope_error`, your app is requesting scopes not enabled in LinkedIn Developer Portal. Keep `LINKEDIN_OAUTH_SCOPES=w_member_social` first, then add `openid profile email` only after those products are approved for your app.
 
 ## Codespaces Smoke Test (Validated)
 
