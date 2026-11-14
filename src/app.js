@@ -66,19 +66,23 @@ function renderHome(){
     const hasProfessional = (s) => /professional/i.test(s);
     // preserve original order from cert.json; do not reorder items
     const cards = items.map(it=>{
-      const logo = LOGO_MAP[provider] || `assets/logos/Logo_${provider}.png`;
+      const logo = LOGO_MAP[provider];
       const isMct = isMctName(it.name);
+      const isFeatured = it.featured === true;
       // level precedence: Expert > Professional > Associate
       let levelClass = '';
       if (hasExpert(it.name)) levelClass = ' level-expert';
       else if (hasProfessional(it.name)) levelClass = ' level-professional';
       else if (hasAssociate(it.name)) levelClass = ' level-associate';
-      const extraClass = (isMct ? ' mct' : '') + levelClass;
-      // provide accessible labeling; if this is an MCT card, include that in the aria-label
-      const roleAttr = `role="article" aria-label="${isMct ? 'Microsoft Certified Trainer — ' : ''}${it.name}"`;
+      const extraClass = (isMct ? ' mct' : '') + (isFeatured ? ' featured' : '') + levelClass;
+      const ariaPrefix = isMct ? 'Microsoft Certified Trainer — ' : isFeatured ? 'Featured certification — ' : '';
+      const roleAttr = `role="article" aria-label="${ariaPrefix}${it.name}"`;
+      const cardLogo = logo
+        ? `<img class="cert-logo" src="${logo}" alt="${it.provider} logo" loading="lazy" />`
+        : `<span class="cert-logo-fallback" aria-hidden="true">${it.provider.charAt(0)}</span>`;
       return (`
       <article class="card ${providerClass}${extraClass}" tabindex="0" ${roleAttr}>
-        <img class="cert-logo" src="${logo}" alt="${it.provider} logo" loading="lazy" />
+        ${cardLogo}
         <div class="cert-name">${it.name}</div>
         <div class="cert-provider">${it.provider}</div>
         <div class="cert-desc">${it.desc}</div>
@@ -86,11 +90,14 @@ function renderHome(){
       `);
     }).join('');
 
-    const logoForProvider = LOGO_MAP[provider] || `assets/logos/Logo_${provider}.png`;
+    const logoForProvider = LOGO_MAP[provider];
+    const headerLogo = logoForProvider
+      ? `<img class="provider-header-logo" src="${logoForProvider}" alt="${provider} logo" loading="lazy" width="160" height="60" />`
+      : `<span class="provider-header-logo-fallback">${provider}</span>`;
     body += `
       <section class="provider-section ${providerClass}">
         <div class="provider-header" role="region" aria-label="${provider}" tabindex="0">
-          <img class="provider-header-logo" src="${logoForProvider}" alt="${provider} logo" loading="lazy" width="160" height="60" />
+          ${headerLogo}
           <h2 class="sr-only">${provider}</h2>
           <div class="small" aria-hidden="true">${items.length} certification(s)</div>
         </div>

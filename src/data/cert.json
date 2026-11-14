@@ -6,6 +6,13 @@
   {"id": "m4", "name": "Microsoft Certified: Azure Developer Associate", "provider": "Microsoft", "desc": "Developing, deploying, and maintaining cloud applications and services on Microsoft Azure."},
   {"id": "m5", "name": "Microsoft Certified: DevOps Engineer Expert", "provider": "Microsoft", "desc": "Designing and implementing DevOps practices to deliver and monitor applications on Azure."},
   
+  {"id": "a1", "name": "Claude Certified Architect Foundations", "provider": "Anthropic", "desc": "Foundational knowledge for designing and architecting solutions with Claude.", "featured": true},
+  {"id": "a2", "name": "Introduction to Model Context Protocol", "provider": "Anthropic", "desc": "Introduction to Model Context Protocol concepts and connecting AI assistants to tools and data."},
+  {"id": "a3", "name": "Certificate of completion: Introduction to agent skills", "provider": "Anthropic", "desc": "Completion of an introductory course on building and using agent skills."},
+  {"id": "a4", "name": "Claude Code in Action", "provider": "Anthropic", "desc": "Practical skills for using Claude Code in software development workflows."},
+  {"id": "a5", "name": "Building with the Claude API", "provider": "Anthropic", "desc": "Fundamentals of building applications with the Claude API."},
+  {"id": "a6", "name": "Certificate of completion: Claude 101", "provider": "Anthropic", "desc": "Introduction to Claude and its capabilities."},
+
   {"id": "o1", "name": "Oracle Certified Java Professional", "provider": "Oracle", "desc": "Proficiency in Java SE programming and core Java development skills."},
   {"id": "o2", "name": "Oracle DBA Certified Associate", "provider": "Oracle", "desc": "Foundational SQL and DBA skills for querying and managing Oracle databases."},
 
