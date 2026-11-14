@@ -54,6 +54,7 @@ html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-
 .card:hover{transform:translateY(-6px);box-shadow:0 22px 44px rgba(2,6,23,0.75)}
 .card::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:6px;height:60%;border-radius:4px;background:var(--accent-stripe, var(--accent));box-shadow:0 4px 10px rgba(2,6,23,0.5)}
 .cert-logo{width:64px;height:64px;object-fit:contain;margin:0 auto 12px;display:block}
+.prov-anthropic .cert-logo{width:128px;height:48px}
 .cert-logo-fallback{width:64px;height:64px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:linear-gradient(145deg,#f3e8e2,#d97757);color:#28150f;font-size:30px;font-weight:800}
 .provider-header-logo-fallback{display:block;color:#d97757;font-size:24px;font-weight:700;letter-spacing:.04em}
 .cert-name{font-weight:600;font-size:16px;margin-bottom:6px;color:#fff}
